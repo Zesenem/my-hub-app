@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./Navbar";
@@ -15,10 +16,11 @@ export default function Layout() {
         <Navbar />
         <main className="flex-grow">
           <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <Outlet />
+            <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
+              <Outlet />
+            </Suspense>
           </div>
         </main>
-
         <Footer />
       </div>
     </div>
