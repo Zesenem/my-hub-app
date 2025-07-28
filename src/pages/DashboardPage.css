@@ -1,0 +1,19 @@
+:root {
+  --masonry-gap: 24px;
+}
+
+.my-masonry-grid {
+  display: flex;
+  margin-left: calc(-1 * var(--masonry-gap));
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: var(--masonry-gap);
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > div {
+  margin-bottom: var(--masonry-gap);
+  break-inside: avoid;
+}
