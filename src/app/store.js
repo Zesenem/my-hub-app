@@ -7,7 +7,7 @@ import dashboardReducer from "./features/dashboard/dashboardSlice";
 import newsReducer from "./features/news/newsSlice";
 import socialsReducer from "./features/socials/socialsSlice";
 import shoppingListReducer from "./features/shoppingList/shoppingListSlice";
-import converterReducer from "./features/converter/converterslice";
+import converterReducer from "./features/converter/converterSlice";
 import cryptoSlice from "./features/crypto/cryptoSlice";
 import recipesReducer from "./features/recipes/recipesSlice";
 

@@ -13,11 +13,15 @@ import {
   addShoppingListItem,
   deleteShoppingListItem,
 } from "../../app/features/shoppingList/shoppingListSlice";
-import { fetchRecipes, deleteRecipe } from "../../app/features/recipes/recipesSlice";
+import {
+  fetchRecipes,
+  deleteRecipe,
+  fetchAiRecipeSuggestion,
+  addRecipe,
+} from "../../app/features/recipes/recipesSlice";
 
 import Spinner from "../Spinner";
 import RecipeSuggestionCard from "../RecipeSuggestionCard";
-import { mockRecipes } from "../../mock/mockRecipeData.js";
 
 const ActionButton = ({ onClick, children, className = "", type = "button", disabled = false }) => (
   <button
@@ -157,9 +161,9 @@ const EditItemModal = ({ item, onClose, onSave }) => {
   );
 };
 
-const RecipeDetailModal = ({ recipe, onClose, onDelete }) => (
+const RecipeDetailModal = ({ recipe, onClose, onDelete, onSave }) => (
   <ModalWrapper onClose={onClose}>
-    <div className="w-full max-w-8xl">
+    <div className="w-full max-w-2xl">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
@@ -211,16 +215,24 @@ const RecipeDetailModal = ({ recipe, onClose, onDelete }) => (
           {recipe.instructions}
         </p>
       </div>
-      {recipe.id && (
-        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-4">
+        {onSave && (
+          <ActionButton
+            onClick={() => onSave(recipe)}
+            className="w-full bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
+          >
+            Save to Collection
+          </ActionButton>
+        )}
+        {onDelete && (
           <ActionButton
             onClick={() => onDelete(recipe.id)}
             className="w-full bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
           >
-            Delete Recipe from Collection
+            Delete from Collection
           </ActionButton>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   </ModalWrapper>
 );
@@ -429,14 +441,11 @@ const ShoppingList = ({ items, onAddItem, onRemoveItem, status }) => {
     </div>
   );
 };
-
 export default function KitchenWidget({ isMaximized = false }) {
   const dispatch = useDispatch();
 
   const [editingItem, setEditingItem] = useState(null);
   const [deletingItem, setDeletingItem] = useState(null);
-  const [recipeSuggestions, setRecipeSuggestions] = useState([]);
-  const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   const [viewingRecipe, setViewingRecipe] = useState(null);
 
@@ -489,20 +498,18 @@ export default function KitchenWidget({ isMaximized = false }) {
   };
 
   const handleFindRecipes = async () => {
-    setIsLoadingRecipes(true);
-    setRecipeSuggestions([]);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setRecipeSuggestions(mockRecipes);
-    toast.success("Mock recipes loaded!");
-
-    setIsLoadingRecipes(false);
-    setShowRecipeModal(true);
+    const pantryItemNames = pantryState.items.map((item) => item.name);
+    try {
+      await dispatch(fetchAiRecipeSuggestion(pantryItemNames)).unwrap();
+      setShowRecipeModal(true);
+      toast.success("Recipe suggestions loaded!");
+    } catch (error) {
+      toast.error(`Failed to get recipe suggestions: ${error}`);
+    }
   };
 
   const handleCloseRecipeModal = () => {
     setShowRecipeModal(false);
-    setRecipeSuggestions([]);
   };
 
   const handleViewRecipe = (recipe) => {
@@ -512,6 +519,12 @@ export default function KitchenWidget({ isMaximized = false }) {
   const handleDeleteRecipe = (recipeId) => {
     dispatch(deleteRecipe(recipeId));
     toast.success("Recipe deleted from your collection.");
+    setViewingRecipe(null);
+  };
+
+  const handleSaveRecipe = (recipeData) => {
+    dispatch(addRecipe(recipeData));
+    toast.success("Recipe saved to your collection!");
     setViewingRecipe(null);
   };
 
@@ -533,7 +546,7 @@ export default function KitchenWidget({ isMaximized = false }) {
       )}
       {showRecipeModal && (
         <ModalWrapper onClose={handleCloseRecipeModal}>
-          <div className="w-full max-w-8xl">
+          <div className="w-full max-w-4xl">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recipe Ideas</h2>
               <button
@@ -551,7 +564,7 @@ export default function KitchenWidget({ isMaximized = false }) {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recipeSuggestions.map((recipe, index) => (
+              {recipesState.suggestions.map((recipe, index) => (
                 <RecipeSuggestionCard key={index} recipe={recipe} onView={handleViewRecipe} />
               ))}
             </div>
@@ -562,7 +575,8 @@ export default function KitchenWidget({ isMaximized = false }) {
         <RecipeDetailModal
           recipe={viewingRecipe}
           onClose={() => setViewingRecipe(null)}
-          onDelete={handleDeleteRecipe}
+          onDelete={viewingRecipe.id ? handleDeleteRecipe : null}
+          onSave={!viewingRecipe.id ? handleSaveRecipe : null}
         />
       )}
 
@@ -577,10 +591,10 @@ export default function KitchenWidget({ isMaximized = false }) {
             </h3>
             <ActionButton
               onClick={handleFindRecipes}
-              disabled={isLoadingRecipes || pantryState.items.length === 0}
+              disabled={recipesState.status === "loading" || pantryState.items.length === 0}
               className="w-full bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
             >
-              {isLoadingRecipes ? "Finding Recipes..." : "What can I make?"}
+              {recipesState.status === "loading" ? "Finding Recipes..." : "What can I make?"}
             </ActionButton>
           </div>
           <div className="bg-gray-100/80 dark:bg-gray-900/50 p-4 rounded-xl">
@@ -588,7 +602,7 @@ export default function KitchenWidget({ isMaximized = false }) {
               Saved Recipes
             </h3>
             <div className="space-y-2">
-              {recipesState.status === "loading" ? (
+              {recipesState.status === "loading" && recipesState.items.length === 0 ? (
                 <Spinner />
               ) : recipesState.items.length > 0 ? (
                 recipesState.items.map((recipe) => (

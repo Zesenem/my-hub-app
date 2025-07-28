@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "json-server --watch db.json --port 3001",
-    "start": "concurrently \"yarn:dev\" \"yarn:server\""
+    "start": "npm run dev"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -17,7 +16,8 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/postcss": "^4.1.10",
     "@tailwindcss/vite": "^4.1.10",
-    "axios": "^1.10.0",
+    "firebase": "^12.0.0",
+    "firebase-admin": "^13.4.0",
     "openai": "^5.9.0",
     "postcss": "^8.5.6",
     "qrcode.react": "^4.2.0",
@@ -34,13 +34,10 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
-    "concurrently": "^9.2.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "json-server": "^1.0.0-beta.3",
     "vite": "^6.3.5"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

@@ -40,7 +40,7 @@ export default function CalculatorWidget() {
     { label: "7", action: () => dispatch(digitPressed({ digit: "7" })) },
     { label: "8", action: () => dispatch(digitPressed({ digit: "8" })) },
     { label: "9", action: () => dispatch(digitPressed({ digit: "9" })) },
-    { label: "×", action: () => dispatch(operatorPressed({ operator: "*" })), variant: "operator" },
+    { label: "x", action: () => dispatch(operatorPressed({ operator: "*" })), variant: "operator" },
     { label: "4", action: () => dispatch(digitPressed({ digit: "4" })) },
     { label: "5", action: () => dispatch(digitPressed({ digit: "5" })) },
     { label: "6", action: () => dispatch(digitPressed({ digit: "6" })) },

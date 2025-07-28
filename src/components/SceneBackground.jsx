@@ -12,6 +12,8 @@ import Layer9 from "../assets/background/Layer_0009_2.png";
 import Layer10 from "../assets/background/Layer_0010_1.png";
 import Layer11 from "../assets/background/Layer_0011_0.png";
 
+// Parralax background attempt turned into scene background component
+
 const SceneBackground = ({ className = "" }) => {
   const layers = useMemo(
     () => [

@@ -8,7 +8,7 @@ import {
   setInputValue,
   swapUnits,
   CONVERTER_CATEGORIES,
-} from "../../app/features/converter/converterslice";
+} from "../../app/features/converter/converterSlice";
 
 const CategoryButtons = ({ categories, selectedCategory, onSelectCategory }) => (
   <div className="flex flex-wrap gap-2">
