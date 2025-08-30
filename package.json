@@ -16,7 +16,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/postcss": "^4.1.10",
     "@tailwindcss/vite": "^4.1.10",
-    "firebase": "^12.0.0",
+    "firebase": "^12.2.1",
     "firebase-admin": "^13.4.0",
     "openai": "^5.9.0",
     "postcss": "^8.5.6",
