@@ -15,7 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LfJkrgrAAAAAJjKpeWpsU0Ts_0eth653DHtNLNk'),
+  provider: new ReCaptchaV3Provider('6LeotLgrAAAAALUjVetLLN_aGyhvmXXF2nK76_5X'),
   isTokenAutoRefreshEnabled: true
 });
 
